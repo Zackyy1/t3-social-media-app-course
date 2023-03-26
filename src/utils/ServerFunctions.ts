@@ -13,6 +13,7 @@ const postWithCommentCountQuery = {
     author: {
       select: {
         name: true,
+        id: true,
       },
     },
   },
@@ -33,4 +34,29 @@ export const getOnePostWithCommentsCount = async (postId: string) =>
       id: postId,
     },
     ...postWithCommentCountQuery,
+  });
+
+export const getUserById = async (userId: string) =>
+  await prisma.user.findUnique({
+    where: {
+      id: userId,
+    },
+    // include: {
+    //   posts: postWithCommentCountQuery,
+    // },
+
+    select: {
+      posts: postWithCommentCountQuery,
+      name: true,
+      id: true,
+      email: true,
+      _count: {
+        select: {
+          friends: true,
+          friendOf: true,
+          comments: true,
+          posts: true
+        },
+      },
+    },
   });

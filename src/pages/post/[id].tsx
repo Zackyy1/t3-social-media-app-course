@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-misused-promises */
 import NewCommentForm from "@/components/NewCommentForm";
 import Post from "@/components/Post";
 import { api } from "@/utils/api";
@@ -12,16 +13,16 @@ interface PostPageProps {
   refreshComments: () => void;
 }
 
-const PostPage = ({ post, refreshComments }: PostPageProps) => {
+const PostPage = ({ post }: PostPageProps) => {
   const comments = api.post.getComments.useQuery({ postId: post.id });
 
   return (
     <div className="flex flex-col gap-4">
       <Post {...post} hideAdditionalData />
-      <NewCommentForm postId={post.id} refreshComments={refreshComments} />
+      <NewCommentForm postId={post.id} refreshComments={() => comments.refetch()} />
       {comments.data && comments.data.length ? (
         <>
-        <h2 className="font-bold ml-1">Comments</h2>
+          <h2 className="ml-1 font-bold">Comments</h2>
           <div className="flex flex-col gap-2">
             {comments.data.map((comment, index: number) => (
               <Comment key={index} {...comment} />

@@ -72,10 +72,12 @@ const Header = () => {
 
   return (
     <div
-      className="z-[99999] min-h-[60px] flex   bg-slate-800 text-center"
+      className="z-[99999] flex min-h-[60px]   bg-slate-800 text-center"
       id="header"
     >
-      <Link className="font-bold pl-4 self-center absolute" href="/">Home</Link>
+      <Link className="absolute self-center pl-4 font-bold" href="/">
+        Home
+      </Link>
       {session ? (
         <Menu
           right
@@ -117,7 +119,7 @@ const Header = () => {
                 onClick={closeSideBar}
                 id="home"
                 className="menu-item"
-                href="/"
+                href={`/user/${session.user.id}`}
               >
                 My Profile
               </Link>

@@ -1,8 +1,16 @@
 import { api } from "@/utils/api";
 import React, { useRef } from "react";
 
-const NewPostForm = () => {
-  const submitPost = api.post.create.useMutation();
+interface NewPostFormProps {
+  refreshPosts?: () => void;
+}
+
+const NewPostForm = ({ refreshPosts }: NewPostFormProps) => {
+  const submitPost = api.post.create.useMutation({
+    onSuccess: () => {
+      refreshPosts && refreshPosts();
+    },
+  });
 
   const inputRef = useRef<HTMLInputElement>(null);
 
