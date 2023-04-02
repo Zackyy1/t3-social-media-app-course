@@ -1,4 +1,3 @@
-/* eslint-disable @typescript-eslint/no-unsafe-assignment */
 import Post from "@/components/Post";
 import { getUserById } from "@/utils/ServerFunctions";
 import type { GetServerSidePropsContext } from "next";
@@ -9,17 +8,11 @@ interface UserPageProps {
 }
 
 const UserProfilePage = ({ user }: UserPageProps) => {
-  console.log(user);
-
   if (!user || !user.posts) {
     return null;
   }
 
-  const {
-    friends: friendsCount,
-    posts: postsCount,
-    comments: commentsCount,
-  } = user["_count"];
+  const { friends: friendsCount, posts: postsCount } = user["_count"];
 
   return (
     <div>
@@ -28,7 +21,6 @@ const UserProfilePage = ({ user }: UserPageProps) => {
         <div className="text-right">
           <p>Friends: {friendsCount} </p>
           <p>Posts: {postsCount} </p>
-          <p>Comments: {commentsCount} </p>
         </div>
       </div>
       {user?.posts?.length ? (
@@ -62,7 +54,7 @@ export const getServerSideProps = async (
 
   return {
     props: {
-      user: JSON.parse(JSON.stringify(user)),
+      user: JSON.parse(JSON.stringify(user)) as UserProps,
     },
   };
 };

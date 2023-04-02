@@ -9,8 +9,8 @@ import {
 } from "@/server/api/trpc";
 import { TRPCError } from "@trpc/server";
 import {
-  getAllPostsWithCommentsCount,
-  getOnePostWithCommentsCount,
+  getAllPostsDetailed,
+  getOnePostDetailed,
 } from "@/utils/ServerFunctions";
 
 export const postRouter = createTRPCRouter({
@@ -40,7 +40,7 @@ export const postRouter = createTRPCRouter({
     }),
 
   getAll: publicProcedure.query(async () => {
-    return (await getAllPostsWithCommentsCount()) as unknown as PostProps[];
+    return (await getAllPostsDetailed()) as unknown as PostProps[];
   }),
 
   getOne: publicProcedure
@@ -52,7 +52,7 @@ export const postRouter = createTRPCRouter({
     .query(async ({ input }) => {
       if (!input || !input.id) return;
 
-      return (await getOnePostWithCommentsCount(
+      return (await getOnePostDetailed(
         input.id
       )) as unknown as PostProps;
     }),
@@ -113,6 +113,79 @@ export const postRouter = createTRPCRouter({
           code: "BAD_REQUEST",
           message: "Something went wrong",
         });
+      }
+    }),
+
+    
+    like: protectedProcedure
+    .input(
+      z.object({
+        id: z.string(),
+      })
+    )
+    .mutation(async ({ ctx, input }) => {
+      if (!input.id)
+        throw new TRPCError({
+          code: "BAD_REQUEST",
+          message: "Id is required",
+        });
+
+      if (!ctx.session?.user.id)
+        throw new TRPCError({
+          code: "BAD_REQUEST",
+          message: "User is not logged in",
+        });
+
+      const post = await ctx.prisma.post.findUnique({
+        where: {
+          id: input.id,
+        },
+      });
+
+      if (!post)
+        throw new TRPCError({
+          code: "BAD_REQUEST",
+          message: "post not found",
+        });
+
+      const like = await ctx.prisma.like.findFirst({
+        where: {
+          AND: [
+            {
+              postId: post.id,
+            },
+            {
+              byId: ctx.session?.user.id,
+            },
+          ],
+        },
+      });
+
+      if (like) {
+        await ctx.prisma.like.delete({
+          where: {
+            id: like.id,
+          },
+        });
+
+        return -1;
+      } else {
+        await ctx.prisma.like.create({
+          data: {
+            post: {
+              connect: {
+                id: post.id,
+              },
+            },
+            by: {
+              connect: {
+                id: ctx.session?.user.id,
+              },
+            },
+          },
+        });
+
+        return 1;
       }
     }),
 });

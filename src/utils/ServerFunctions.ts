@@ -1,6 +1,6 @@
 import { prisma } from "@/server/db";
 
-const postWithCommentCountQuery = {
+const commentsAndLikesCountQuery = {
   select: {
     content: true,
     createdAt: true,
@@ -8,6 +8,7 @@ const postWithCommentCountQuery = {
     _count: {
       select: {
         comments: true,
+        likes: true,
       },
     },
     author: {
@@ -19,21 +20,21 @@ const postWithCommentCountQuery = {
   },
 };
 
-export const getAllPostsWithCommentsCount = async () =>
+export const getAllPostsDetailed = async () =>
   prisma.post.findMany({
     take: 10,
     orderBy: {
       createdAt: "desc",
     },
-    ...postWithCommentCountQuery,
+    ...commentsAndLikesCountQuery,
   });
 
-export const getOnePostWithCommentsCount = async (postId: string) =>
+export const getOnePostDetailed = async (postId: string) =>
   prisma.post.findUnique({
     where: {
       id: postId,
     },
-    ...postWithCommentCountQuery,
+    ...commentsAndLikesCountQuery,
   });
 
 export const getUserById = async (userId: string) =>
@@ -42,7 +43,7 @@ export const getUserById = async (userId: string) =>
       id: userId,
     },
     select: {
-      posts: postWithCommentCountQuery,
+      posts: commentsAndLikesCountQuery,
       name: true,
       id: true,
       email: true,
@@ -51,7 +52,7 @@ export const getUserById = async (userId: string) =>
           friends: true,
           friendOf: true,
           comments: true,
-          posts: true
+          posts: true,
         },
       },
     },

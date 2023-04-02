@@ -3,6 +3,7 @@ import { api } from "@/utils/api";
 import { useSession } from "next-auth/react";
 import Link from "next/link";
 import React, { useState, useRef, useEffect } from "react";
+import Likes from "./Likes";
 import ThreeDotsButton from "./ThreeDotsButton";
 import UtilityMenuDropdown from "./UtilityMenuDropdown";
 
@@ -61,6 +62,7 @@ const Post = ({
         )}
       </div>
       <p className="py-4 pl-2">{content}</p>
+      {/* <Likes count={} /> */}
       {!hideAdditionalData && (
         <div className="flex  flex-row justify-end text-sm text-slate-300">
           <Link className="underline" href={`/post/${id}`}>

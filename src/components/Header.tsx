@@ -16,8 +16,8 @@ const styles = {
   },
   bmBurgerBars: {
     background: "#ffffff",
-    height: '4px',
-    borderRadius: '4px',
+    height: "4px",
+    borderRadius: "4px",
   },
 
   bmBurgerBarsHover: {
@@ -77,7 +77,7 @@ const Header = () => {
 
   return (
     <div
-      className="z-[99999] flex min-h-[60px] w-full relative bg-slate-800 text-center"
+      className="relative z-[99999] flex min-h-[60px] w-full bg-slate-800 text-center"
       id="header"
     >
       <Link className="absolute self-center pl-4 font-bold" href="/">
@@ -103,14 +103,6 @@ const Header = () => {
                 href="/"
               >
                 Feed
-              </Link>
-              <Link
-                onClick={closeSideBar}
-                id="home"
-                className="menu-item"
-                href="/"
-              >
-                New Post
               </Link>
               <Link
                 onClick={closeSideBar}

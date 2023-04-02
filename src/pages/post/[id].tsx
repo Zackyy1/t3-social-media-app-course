@@ -1,7 +1,7 @@
 import NewCommentForm from "@/components/NewCommentForm";
 import Post from "@/components/Post";
 import { api } from "@/utils/api";
-import { getOnePostWithCommentsCount } from "@/utils/ServerFunctions";
+import { getOnePostDetailed } from "@/utils/ServerFunctions";
 import type { GetServerSidePropsContext } from "next";
 import React from "react";
 
@@ -57,7 +57,7 @@ export const getServerSideProps = async (
   context: GetServerSidePropsContext
 ) => {
   const { id } = context.query;
-  const post = (await getOnePostWithCommentsCount(
+  const post = (await getOnePostDetailed(
     id as string
   )) as unknown as PostProps;
 
