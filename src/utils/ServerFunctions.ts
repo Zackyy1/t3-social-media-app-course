@@ -41,10 +41,6 @@ export const getUserById = async (userId: string) =>
     where: {
       id: userId,
     },
-    // include: {
-    //   posts: postWithCommentCountQuery,
-    // },
-
     select: {
       posts: postWithCommentCountQuery,
       name: true,

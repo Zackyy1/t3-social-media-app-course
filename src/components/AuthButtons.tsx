@@ -16,7 +16,7 @@ const AuthButtons = () => {
       </button>
     </div>
   ) : (
-    <div>
+    <div className="absolute right-2">
       <Link className="block p-4 text-right font-bold" href="/login">
         Login
       </Link>

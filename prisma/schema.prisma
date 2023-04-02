@@ -104,4 +104,6 @@ model Like {
     commentId String?
     post      Post?    @relation(fields: [postId], references: [id], onDelete: Cascade)
     postId    String?
+
+    @@unique([byId, commentId, postId])
 }

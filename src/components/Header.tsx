@@ -7,15 +7,19 @@ import AuthButtons from "./AuthButtons";
 
 const styles = {
   bmBurgerButton: {
-    position: "fixed",
+    position: "absolute",
     width: "36px",
     height: "30px",
     right: "12px",
-    top: "12px",
+    top: "50%",
+    transform: "translateY(-50%)",
   },
   bmBurgerBars: {
     background: "#ffffff",
+    height: '4px',
+    borderRadius: '4px',
   },
+
   bmBurgerBarsHover: {
     background: "#a90000",
   },
@@ -23,6 +27,7 @@ const styles = {
     height: "24px",
     width: "24px",
   },
+
   bmCross: {
     background: "#bdc3c7",
   },
@@ -42,7 +47,7 @@ const styles = {
     fill: "#373a47",
   },
   bmItemList: {
-    color: "#b8b7ad",
+    color: "#dcdcdc",
     padding: "0.8em",
   },
 
@@ -72,7 +77,7 @@ const Header = () => {
 
   return (
     <div
-      className="z-[99999] flex min-h-[60px]   bg-slate-800 text-center"
+      className="z-[99999] flex min-h-[60px] w-full relative bg-slate-800 text-center"
       id="header"
     >
       <Link className="absolute self-center pl-4 font-bold" href="/">

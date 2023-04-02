@@ -7,7 +7,7 @@ interface NewCommentFormProps {
 }
 
 const NewCommentForm = ({ postId, refreshComments }: NewCommentFormProps) => {
-  const newPost = api.post.addComment.useMutation({
+  const newPost = api.comment.create.useMutation({
     onSuccess: () => {
       refreshComments();
     },

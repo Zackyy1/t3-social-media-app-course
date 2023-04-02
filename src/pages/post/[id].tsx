@@ -1,4 +1,3 @@
-/* eslint-disable @typescript-eslint/no-misused-promises */
 import NewCommentForm from "@/components/NewCommentForm";
 import Post from "@/components/Post";
 import { api } from "@/utils/api";
@@ -10,22 +9,38 @@ import Comment from "@/components/Comment";
 
 interface PostPageProps {
   post: PostProps;
-  refreshComments: () => void;
 }
 
 const PostPage = ({ post }: PostPageProps) => {
-  const comments = api.post.getComments.useQuery({ postId: post.id });
+  const comments = api.comment.getAll.useQuery(
+    { postId: post.id },
+    {
+      refetchOnWindowFocus: true,
+      refetchOnMount: true,
+      refetchOnReconnect: true,
+
+    }
+  );
+
+  console.log("HERE", comments.data);
 
   return (
     <div className="flex flex-col gap-4">
       <Post {...post} hideAdditionalData />
-      <NewCommentForm postId={post.id} refreshComments={() => comments.refetch()} />
+      <NewCommentForm
+        postId={post.id}
+        refreshComments={() => void comments.refetch()}
+      />
       {comments.data && comments.data.length ? (
         <>
           <h2 className="ml-1 font-bold">Comments</h2>
           <div className="flex flex-col gap-2">
             {comments.data.map((comment, index: number) => (
-              <Comment key={index} {...comment} />
+              <Comment
+                refreshCallback={() => void comments.refetch()}
+                key={Math.random() * index}
+                {...comment}
+              />
             ))}
           </div>
         </>

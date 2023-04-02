@@ -1,8 +1,4 @@
-/* eslint-disable @typescript-eslint/no-unsafe-argument */
-/* eslint-disable @typescript-eslint/no-unsafe-call */
-/* eslint-disable @typescript-eslint/no-unsafe-member-access */
-/* eslint-disable @typescript-eslint/no-unsafe-return */
-import type { Comment, Post } from "@prisma/client";
+import type { Post } from "@prisma/client";
 
 import { z } from "zod";
 
@@ -47,13 +43,19 @@ export const postRouter = createTRPCRouter({
     return (await getAllPostsWithCommentsCount()) as unknown as PostProps[];
   }),
 
-  getOne: publicProcedure.query(async ({ input }) => {
-    if (!input || !(input as any).id) return;
+  getOne: publicProcedure
+    .input(
+      z.object({
+        id: z.string(),
+      })
+    )
+    .query(async ({ input }) => {
+      if (!input || !input.id) return;
 
-    return (await getOnePostWithCommentsCount(
-      (input as any).id
-    )) as unknown as PostProps;
-  }),
+      return (await getOnePostWithCommentsCount(
+        input.id
+      )) as unknown as PostProps;
+    }),
 
   delete: protectedProcedure
     .input(
@@ -62,7 +64,6 @@ export const postRouter = createTRPCRouter({
       })
     )
     .mutation(async ({ ctx, input }) => {
-      console.log("yee haw");
       if (!input.id)
         throw new TRPCError({
           code: "BAD_REQUEST",
@@ -75,7 +76,7 @@ export const postRouter = createTRPCRouter({
           message: "User is not logged in",
         });
 
-      const post = await ctx.prisma.post.findUnique({
+      const post = (await ctx.prisma.post.findUnique({
         where: {
           id: input.id,
         },
@@ -86,7 +87,7 @@ export const postRouter = createTRPCRouter({
             },
           },
         },
-      });
+      })) as Post;
 
       if (!post) {
         throw new TRPCError({
@@ -95,7 +96,7 @@ export const postRouter = createTRPCRouter({
         });
       }
 
-      if (ctx.session?.user.id !== post.author.id)
+      if (ctx.session?.user.id !== post.authorId)
         throw new TRPCError({
           code: "BAD_REQUEST",
           message: "User is not authorized to delete this post",
@@ -113,56 +114,5 @@ export const postRouter = createTRPCRouter({
           message: "Something went wrong",
         });
       }
-    }),
-
-  addComment: protectedProcedure
-    .input(
-      z.object({
-        postId: z.string(),
-        content: z.string(),
-      })
-    )
-    .mutation(async ({ ctx, input }) => {
-      if (!input.content)
-        throw new TRPCError({
-          code: "BAD_REQUEST",
-          message: "Content is required",
-        });
-
-      return (await ctx.prisma.comment.create({
-        data: {
-          content: input.content,
-          post: {
-            connect: {
-              id: input.postId,
-            },
-          },
-          author: {
-            connect: {
-              id: ctx.session?.user.id,
-            },
-          },
-        },
-      })) as unknown as Comment;
-    }),
-
-  getComments: publicProcedure
-    .input(
-      z.object({
-        postId: z.string(),
-      })
-    )
-    .query(async ({ ctx, input }) => {
-      return (await ctx.prisma.comment.findMany({
-        where: {
-          postId: input.postId,
-        },
-        orderBy: {
-          createdAt: "desc",
-        },
-        include: {
-          author: true,
-        },
-      })) as unknown as CommentProps[];
     }),
 });

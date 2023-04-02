@@ -16,11 +16,17 @@ type PostProps = {
 type CommentProps = {
   author: {
     name: string;
+    id: string;
   };
   content: string;
   createdAt: string;
   id: string;
   postId: string;
+  refreshCallback?: () => void;
+  _count?: {
+    likes: number;
+  };
+  isLikedByMe?: boolean;
 };
 
 type UserProps = {
@@ -31,7 +37,7 @@ type UserProps = {
   friends: UserProps[];
   friendOf: UserProps[];
   comments: CommentProps[];
-  _count?: {
+  _count: {
     friends: number;
     friendOf: number;
     comments: number;

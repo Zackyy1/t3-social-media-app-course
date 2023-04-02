@@ -2,7 +2,6 @@
 import Post from "@/components/Post";
 import { getUserById } from "@/utils/ServerFunctions";
 import type { GetServerSidePropsContext } from "next";
-import Link from "next/link";
 import React from "react";
 
 interface UserPageProps {
@@ -16,14 +15,20 @@ const UserProfilePage = ({ user }: UserPageProps) => {
     return null;
   }
 
+  const {
+    friends: friendsCount,
+    posts: postsCount,
+    comments: commentsCount,
+  } = user["_count"];
+
   return (
     <div>
       <div className="grid grid-cols-2">
         <h1>{user.name}</h1>
         <div className="text-right">
-          <p>Friends: {user["_count"]?.friends} </p>
-          <p>Posts: {user["_count"]?.posts} </p>
-          <p>Comments: {user["_count"]?.comments} </p>
+          <p>Friends: {friendsCount} </p>
+          <p>Posts: {postsCount} </p>
+          <p>Comments: {commentsCount} </p>
         </div>
       </div>
       {user?.posts?.length ? (
